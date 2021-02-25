@@ -1,0 +1,70 @@
+Project Notes
+=============
+
+
+Pending actions:
+----------------
+1- Review the Logger if implemented correctly. Log ID defined in the class is not used properly, I believe.
+2- NOT ABLE YET TO RETURN ALL ERRORS IN THE SAME VALIDATION.
+3- Application Insight - Don't know if it's working.
+
+
+
+Database and URLs:
+---------------------
+Local Database : (LocalDb)\mssqllocaldb
+AZURE URL : https://rjnf-taskapi.azurewebsites.net/index.html
+
+
+
+Desing decisions and comments:
+------------------------------
+1) Controllers -
+    a. All actions had a try catch to avoid exception to be throw back to the client.
+    b. ErrorResponse JSON content was implemente as a static method in ErrorLibrary, so it could be reused by all actions in the controller.
+    c. I wasn't able to refactor the part of the code which gets the error content by the data structure validation. The code is duplicated in the POST and PUT.
+    d. I left the ApplicationInshigts implementation in this namespace, as I will check how it works later.
+2) Data - Classes related to the database.
+3) DataTransferObjects - 
+    a. All Data Transfer Objects required by the application.
+    b. DataConversion Class - Classe which hold any data conversion required to read/write into the DTOs, in this application the only conversion was about the dueDate. I have the impression this was not the right location for this class though.
+4) Lib - Library with several classes required by the Application.
+5) Middleware - Class implementing additional features in the middleware.
+6) Models - Database models.  
+
+
+
+Functional Test:
+----------------
+1-  One test checks duplicated name, after run the tests, the records added needs to deleted  before the next run.
+
+
+
+ERRO CODES:
+-----------
+    1: return ("The entity already exists.", errorNumber);
+    2: return ("The parameter value is too large.", errorNumber);
+    3: return ("The parameter is required.", errorNumber);
+    4: return ("The maximum number of entities have been created. No further entities can be created at this time.", errorNumber);
+    5: return ("The entity could not be found.", errorNumber);
+    6: return ("The parameter value is too small.", errorNumber);
+    7: return ("The parameter value is not valid.", errorNumber);
+    8: return ("Due date must be in future.", errorNumber);
+    9: return ("Not a valid date, the format is yyyy-MM-dd.", errorNumber);
+    10: return ("The entity could not be found.", errorNumber);
+    default: return ($"Raw Error: {encodedErrorDescription}", errorNumber);
+
+
+
+Challenges:
+-----------
+1) Understand the several types of validations and the best practices around which one : Attribute Annotation, Class Level validation, DTO Level, Model Level, etc. Not able to figure out also, even when the field had the annotation as "[Required]",  I wasn't able to capture in the Model Validation, an erro such as "Field or Jason attribute missing".
+2) EFCore was using a ErrorResponse as array, I had to covert it to an object.
+3) Figure out, how to return all tasks as an array, within the "Tasks" object.
+4) Implement the query in a clever way. Such as using LINQ chaining. (I didn't implement yet, I have four clauses) 
+5) Implement the MS TEST for the Error Response. I implemented the error response as an Array, but this was throwing and exception during the tests.
+6) Oh God! DateTime conversion is always a challenge.
+7) I was able to refactor the ErrorResponse via reusing the same method in all controllers, but I wasn't able to do the same with the clever code added to capture the validation error. I got so disapointed for not be able to achieve it. I face challenges with the Async vs data types, If I am not wrong.
+8) Understand the Logger implementation vc where messages are stored in the Server or Azure side.
+9) ApplicationInshigts - I haven't had time yet to understand how to use it and when I should use it.
+
